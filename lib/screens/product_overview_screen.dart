@@ -1,8 +1,10 @@
-import 'dart:html';
-
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/products_provider.dart';
+import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/products_grid.dart';
 
 enum FilterOptions {
@@ -17,17 +19,18 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorite = false;
+  int _count = 0;
 
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<ProductsProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Product Overview"),
         actions: [
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
-              print(selectedValue);
               setState(() {
                 if (selectedValue == FilterOptions.Favourite) {
                   _showOnlyFavorite = true;
@@ -51,42 +54,42 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               Icons.more_vert,
             ),
           ),
-        ],
-      ),
-      body: ProductsGrid(_showOnlyFavorite),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Icon(Icons.shopping_cart),
-            ),
-            Positioned(
-              top: -15,
-              right: -15,
-              child: Container(
-                child: CircleAvatar(
-                  backgroundColor: Colors.red,
-                  radius: 15,
-                  child: FittedBox(
-                    child: Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        "99+",
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
+          Consumer<Cart>(
+            builder: (_, cart, child) => Badge(
+              position: BadgePosition(end: -2, top: 0),
+              animationType: BadgeAnimationType.scale,
+              animationDuration: Duration(milliseconds: 1),
+              badgeContent: _count <= 9
+                  ? Text(
+                      cart.itemCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      cart.itemCount.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
+              child: child,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  CartScreen.routeName,
+                );
+              },
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+        ],
       ),
+      drawer: AppDrawer(),
+      body: ProductsGrid(_showOnlyFavorite),
     );
   }
 }
