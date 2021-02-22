@@ -39,8 +39,12 @@ class CartScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Consumer<Order>(
                         builder: (ctx, order, child) => RaisedButton(
+                          color: Theme.of(context).accentColor,
                           onPressed: () {
                             order.addOrders(
                               cart.items.values.toList(),
@@ -50,8 +54,8 @@ class CartScreen extends StatelessWidget {
                           },
                           child: Text(
                             "ORDER NOW",
-                            style: TextStyle(
-                              color: Theme.of(context).accentColor,
+                            style: const TextStyle(
+                              color: Colors.white,
                             ),
                           ),
                         ),
