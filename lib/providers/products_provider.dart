@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import './products.dart';
 
@@ -65,8 +68,50 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProducts() {
-    /*_items.add(value);*/
+  void addProducts(Products product) {
+    const url =
+        "https://animex-95911-default-rtdb.firebaseio.com/products.json";
+    http
+        .post(
+      url,
+      body: json.encode(
+        {
+          "title": product.title,
+          "desc": product.desc,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        },
+      ),
+    )
+        .then(
+      (response) {
+        print(json.decode(response.body));
+        final newProduct = Products(
+          id: json.decode(response.body)["name"],
+          title: product.title,
+          desc: product.desc,
+          imageUrl: product.imageUrl,
+          price: product.price,
+        );
+        _items.add(newProduct);
+        notifyListeners();
+      },
+    );
+  }
+
+  void updateProduct(String id, Products newProduct) {
+    final prodIndex = _items.indexWhere((element) => id == element.id);
+    if (prodIndex >= 0) {
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    } else {
+      print("...");
+    }
+  }
+
+  void deleteProduct(String id) {
+    _items.removeWhere((element) => id == element.id);
     notifyListeners();
   }
 }
