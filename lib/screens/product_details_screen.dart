@@ -57,6 +57,13 @@ class ProductDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Text(
+                        "\₹${loadedProduct.price.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
                     ],
                   ),
                 ),

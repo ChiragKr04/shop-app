@@ -16,6 +16,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     return Column(
       children: [
         ListTile(
@@ -74,9 +75,18 @@ class UserProductItem extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.all(5),
                                 child: FlatButton(
-                                  onPressed: () {
-                                    prod.deleteProduct(id);
-                                    Navigator.of(ctx).pop(true);
+                                  onPressed: () async {
+                                    try {
+                                      await prod.deleteProduct(id);
+                                      Navigator.of(ctx).pop(true);
+                                    } catch (error) {
+                                      print("$error snackbar");
+                                      scaffold.showSnackBar(
+                                        SnackBar(
+                                          content: Text("Deleting Failed!"),
+                                        ),
+                                      );
+                                    }
                                   },
                                   child: Text(
                                     "Yes",
