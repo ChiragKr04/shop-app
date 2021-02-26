@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/products_provider.dart';
@@ -51,7 +52,7 @@ class UserProductItem extends StatelessWidget {
                       onPressed: () {
                         showDialog(
                           context: context,
-                          builder: (ctx) => AlertDialog(
+                          builder: (ctxAlert) => AlertDialog(
                             title: Text("Are you sure?"),
                             content: Text(
                               "Do you want to remove this product?",
@@ -76,14 +77,17 @@ class UserProductItem extends StatelessWidget {
                                 padding: EdgeInsets.all(5),
                                 child: FlatButton(
                                   onPressed: () async {
+                                    Navigator.of(ctxAlert).pop();
                                     try {
                                       await prod.deleteProduct(id);
-                                      Navigator.of(ctx).pop(true);
                                     } catch (error) {
                                       print("$error snackbar");
                                       scaffold.showSnackBar(
                                         SnackBar(
-                                          content: Text("Deleting Failed!"),
+                                          content: Text(
+                                            "Deleting Failed!",
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                       );
                                     }

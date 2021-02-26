@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/models/http_exception.dart';
 
 import './products.dart';
 
@@ -83,6 +83,7 @@ class ProductsProvider with ChangeNotifier {
         loadedProduct.add(
           Products(
             id: key,
+            isFavorite: value["isFavorite"],
             title: value["title"],
             desc: value["desc"],
             imageUrl: value["imageUrl"],
@@ -97,7 +98,7 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  addProducts(Products product) async {
+  Future<void> addProducts(Products product) async {
     try {
       final response = await http.post(
         url,
@@ -156,18 +157,15 @@ class ProductsProvider with ChangeNotifier {
     var existingItem = _items[existingIndex];
     final url =
         "https://animex-95911-default-rtdb.firebaseio.com/products/$id.json";
-    _items.removeWhere((element) => id == element.id);
+    _items.removeAt(existingIndex);
     notifyListeners();
-    await http.delete(url).then((response) {
-      print(response.statusCode);
-      if (response.statusCode >= 400) {
-        throw HttpException("Cannot delete this product");
-      }
-      existingItem = null;
-    }).catchError((error) {
-      print(error);
+    final response = await http.delete(url);
+    print(response.statusCode);
+    if (response.statusCode >= 400) {
       _items.insert(existingIndex, existingItem);
       notifyListeners();
-    });
+      throw HttpsException("Cannot delete this product");
+    }
+    existingItem = null;
   }
 }

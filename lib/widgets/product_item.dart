@@ -10,6 +10,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Products>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
+    final scaffold = ScaffoldMessenger.of(context);
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -39,8 +40,9 @@ class ProductItem extends StatelessWidget {
                     product.isFavorite ? Icons.favorite : Icons.favorite_border,
                   ),
                   color: Theme.of(context).accentColor,
-                  onPressed: () {
+                  onPressed: () async {
                     product.isFavoriteToggle();
+                    print("${product.isFavorite}${product.id}");
                   },
                 );
               },

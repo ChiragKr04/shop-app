@@ -43,21 +43,9 @@ class CartScreen extends StatelessWidget {
                         width: 10,
                       ),
                       Consumer<Order>(
-                        builder: (ctx, order, child) => RaisedButton(
-                          color: Theme.of(context).accentColor,
-                          onPressed: () {
-                            order.addOrders(
-                              cart.items.values.toList(),
-                              cart.totalAmount,
-                            );
-                            cart.clearCart();
-                          },
-                          child: Text(
-                            "ORDER NOW",
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
+                        builder: (ctx, order, child) => OrderButton(
+                          cart: cart,
+                          order: order,
                         ),
                       ),
                     ],
@@ -85,6 +73,54 @@ class CartScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    this.cart,
+    this.order,
+    Key key,
+  }) : super(key: key);
+
+  final Order order;
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      color: Theme.of(context).accentColor,
+      onPressed: widget.cart.totalAmount <= 0 || _isLoading
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await widget.order.addOrders(
+                widget.cart.items.values.toList(),
+                widget.cart.totalAmount,
+              );
+              setState(() {
+                _isLoading = false;
+              });
+              widget.cart.clearCart();
+            },
+      child: _isLoading
+          ? FittedBox(child: CircularProgressIndicator())
+          : Text(
+              "ORDER NOW",
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
     );
   }
 }
