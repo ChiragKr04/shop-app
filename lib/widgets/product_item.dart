@@ -1,79 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart.dart';
-import 'package:shop_app/screens/product_details_screen.dart';
 
-import '../providers/products.dart';
+import '../screens/product_detail_screen.dart';
+import '../providers/product.dart';
+import '../providers/cart.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
+  // final String id;
+  // final String title;
+  // final String imageUrl;
+
+  // ProductItem(this.id, this.title, this.imageUrl);
+
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Products>(context, listen: false);
+    final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
-    final scaffold = ScaffoldMessenger.of(context);
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      elevation: 8,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: GridTile(
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed(
-                ProductDetailsScreen.routeName,
-                arguments: product.id,
-              );
-            },
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-            ),
+    final authData = Provider.of<Auth>(context, listen: false);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: GridTile(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              ProductDetailScreen.routeName,
+              arguments: product.id,
+            );
+          },
+          child: Image.network(
+            product.imageUrl,
+            fit: BoxFit.cover,
           ),
-          footer: GridTileBar(
-            backgroundColor: Colors.black.withOpacity(0.82),
-            leading: Consumer<Products>(
-              builder: (_, ctx, child) {
-                return IconButton(
+        ),
+        footer: GridTileBar(
+          backgroundColor: Colors.black87,
+          leading: Consumer<Product>(
+            builder: (ctx, product, _) => IconButton(
                   icon: Icon(
                     product.isFavorite ? Icons.favorite : Icons.favorite_border,
                   ),
                   color: Theme.of(context).accentColor,
-                  onPressed: () async {
-                    product.isFavoriteToggle();
-                    print("${product.isFavorite}${product.id}");
+                  onPressed: () {
+                    product.toggleFavoriteStatus(
+                      authData.token,
+                      authData.userId,
+                    );
                   },
-                );
-              },
+                ),
+          ),
+          title: Text(
+            product.title,
+            textAlign: TextAlign.center,
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.shopping_cart,
             ),
-            trailing: IconButton(
-              color: Theme.of(context).accentColor,
-              onPressed: () {
-                cart.addItems(product.id, product.price, product.title);
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Item added to Cart"),
-                    duration: Duration(seconds: 1),
-                    action: SnackBarAction(
-                      label: "UNDO",
-                      onPressed: () {
-                        cart.removeSingleItem(product.id);
-                      },
-                    ),
+            onPressed: () {
+              cart.addItem(product.id, product.price, product.title);
+              Scaffold.of(context).hideCurrentSnackBar();
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Added item to cart!',
                   ),
-                );
-              },
-              icon: Icon(Icons.add_shopping_cart),
-            ),
-            title: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                product.title,
-                textAlign: TextAlign.center,
-              ),
-            ),
+                  duration: Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeSingleItem(product.id);
+                    },
+                  ),
+                ),
+              );
+            },
+            color: Theme.of(context).accentColor,
           ),
         ),
       ),
