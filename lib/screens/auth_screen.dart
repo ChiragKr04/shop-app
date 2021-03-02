@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth.dart';
 import '../models/http_exception.dart';
+import '../providers/auth.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -24,8 +24,8 @@ class AuthScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
-                  Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
+                  Color.fromRGBO(119, 243, 108, 1.0).withOpacity(0.5),
+                  Color.fromRGBO(112, 189, 231, 1.0).withOpacity(0.9),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -108,17 +108,17 @@ class _AuthCardState extends State<AuthCard> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-            title: Text('An Error Occurred!'),
-            content: Text(message),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Okay'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              )
-            ],
-          ),
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -208,6 +208,7 @@ class _AuthCardState extends State<AuthCard> {
                     if (value.isEmpty || !value.contains('@')) {
                       return 'Invalid email!';
                     }
+                    return null;
                   },
                   onSaved: (value) {
                     _authData['email'] = value;
@@ -221,6 +222,7 @@ class _AuthCardState extends State<AuthCard> {
                     if (value.isEmpty || value.length < 5) {
                       return 'Password is too short!';
                     }
+                    return null;
                   },
                   onSaved: (value) {
                     _authData['password'] = value;
@@ -236,6 +238,7 @@ class _AuthCardState extends State<AuthCard> {
                             if (value != _passwordController.text) {
                               return 'Passwords do not match!';
                             }
+                            return null;
                           }
                         : null,
                   ),

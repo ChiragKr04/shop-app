@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/http_exception.dart';
 import './product.dart';
+import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -73,7 +73,8 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
-    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url =
         'https://animex-95911-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
@@ -92,7 +93,7 @@ class Products with ChangeNotifier {
           id: prodId,
           title: prodData['title'],
           description: prodData['description'],
-          price: prodData['price'],
+          price: double.parse(prodData['price'].toString()),
           isFavorite:
               favoriteData == null ? false : favoriteData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
@@ -115,7 +116,7 @@ class Products with ChangeNotifier {
           'title': product.title,
           'description': product.description,
           'imageUrl': product.imageUrl,
-          'price': product.price,
+          'price': product.price.toStringAsFixed(2),
           'creatorId': userId,
         }),
       );
@@ -140,13 +141,15 @@ class Products with ChangeNotifier {
     if (prodIndex >= 0) {
       final url =
           'https://animex-95911-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken';
-      await http.patch(url,
-          body: json.encode({
-            'title': newProduct.title,
-            'description': newProduct.description,
-            'imageUrl': newProduct.imageUrl,
-            'price': newProduct.price
-          }));
+      await http.patch(
+        url,
+        body: json.encode({
+          'title': newProduct.title,
+          'description': newProduct.description,
+          'imageUrl': newProduct.imageUrl,
+          'price': newProduct.price.toStringAsFixed(2),
+        }),
+      );
       _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
