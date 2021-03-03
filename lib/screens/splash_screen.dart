@@ -7,8 +7,8 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text("Loading..."),
-            CircularProgressIndicator(),
+            Center(child: Text("Loading...")),
+            Center(child: CircularProgressIndicator()),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helper/page_transition.dart';
 import 'package:shop_app/screens/splash_screen.dart';
 
 import './providers/auth.dart';
@@ -52,6 +53,12 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.green,
             accentColor: Colors.blue,
             fontFamily: 'Lato',
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              },
+            ),
           ),
           home: auth.isAuth
               ? ProductsOverviewScreen()
@@ -62,6 +69,7 @@ class MyApp extends StatelessWidget {
                           : AuthScreen(),
                   future: auth.tryAutoLogin(),
                 ),
+          initialRoute: '/',
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),

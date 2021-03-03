@@ -56,7 +56,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _imageUrlController.text = _editedProduct.imageUrl;
       } else {
         _imageUrlController.text =
-            "https://static.thenounproject.com/png/2034632-200.png";
+            "https://img.icons8.com/bubbles/2x/product.png";
       }
     }
     _isInit = false;
